@@ -20,7 +20,7 @@ button.addEventListener('click', async () => {
     
     // start picture in picture
     await videoElement.requestPictureInPicture();
-    button.disabled = false;
+    button.disabled = falspicture;
 });
 
 selectMediaStream();
