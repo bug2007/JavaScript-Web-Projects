@@ -50,7 +50,7 @@ async function getQuotes() {
         apiQuotes = await response.json();   //converting into a json obj
         newQuote();
     } catch (error) {
-
+        
     }
 }
 
