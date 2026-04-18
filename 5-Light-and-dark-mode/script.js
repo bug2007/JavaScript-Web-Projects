@@ -27,9 +27,6 @@ function lightMode() {
     textBox.style.backgroundColor = 'rgb(0 0 0 / 50%)';
     toggleIcon.children[0].textContent = 'Light Mode';
     toggleIcon.children[1].classList.replace('fa-moon', 'fa-sun');
-    image1.src = 'images/undraw_proud_coder_light.svg';
-    image2.src = 'images/undraw_feeling_proud_light.svg';
-    image3.src = 'images/undraw_conceptual_idea_light.svg';
     imageMode('light');
 }
 
@@ -37,12 +34,25 @@ function lightMode() {
 function switchTheme(event) {
     if (event.target.checked) {
         document.documentElement.setAttribute('data-theme', 'dark');  // setting dark mode to the highest level element. same as doing <html data-theme="dark">
+        localStorage.setItem('theme', 'dark');
         darkMode();
     } else {
         document.documentElement.setAttribute('data-theme', 'light');  // setting light mode to the highest level element. falls back to :root
+        localStorage.setItem('theme', 'light');
         lightMode();
     }
 }
 
 // event listener
 toggleSwitch.addEventListener('change', switchTheme);
+
+// check local storage for theme
+const currentTheme = localStorage.getItem('theme');
+if (currentTheme) {
+    document.documentElement.setAttribute('data-theme', currentTheme);
+
+    if (currentTheme === 'dark') {
+        toggleSwitch.checked = true;
+        darkMode();
+    }
+}
