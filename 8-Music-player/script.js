@@ -114,7 +114,16 @@ function updateProgressBar(e) {   // passing in the event itself
 }
 
 
+function setProgressBar(e) {
+    const width = e.srcElement.clientWidth;  // or use this.clientWidth
+    const clickX = e.offsetX;
+    const {duration} = music;
+    music.currentTime = (clickX / width) * duration;
+}
+
 // event listeners
 prevBtn.addEventListener('click', prevSong);
 nextBtn.addEventListener('click', nextSong);
+music.addEventListener('ended', nextSong);
 music.addEventListener('timeupdate', updateProgressBar); // the event fires when the current playback position has changed
+progressContainer.addEventListener('click', setProgressBar);
