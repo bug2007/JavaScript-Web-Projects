@@ -9,6 +9,7 @@ const timeElements = document.querySelectorAll('span');  // returns an arr of al
 let countdownTitle = '';
 let countdownDate = '';
 let countdownValue = Date; // a date obj
+let countdownActive;
 
 // all r in milliseconds
 const second = 1000;
@@ -22,23 +23,26 @@ dateEl.setAttribute('min', today);
 
 // populate countdown
 function updateDOM() {
-    const now = new Date().getTime();
-    const distance = countdownValue - now; // in milliseconds
 
-    const days = Math.floor(distance / day);
-    const hours = Math.floor((distance % day) / hour);
-    const minutes = Math.floor((distance % hour) / minute);
-    const seconds = Math.floor((distance % minute) / second);
+    countdownActive = setInterval(() => {
+        const now = new Date().getTime();
+        const distance = countdownValue - now; // in milliseconds
 
-    // populate countdown
-    countdownElTitle.textContent = `${countdownTitle}`;
-    timeElements[0].textContent = `${days}`;
-    timeElements[1].textContent = `${hours}`;
-    timeElements[2].textContent = `${minutes}`;
-    timeElements[3].textContent = `${seconds}`;
+        const days = Math.floor(distance / day);
+        const hours = Math.floor((distance % day) / hour);
+        const minutes = Math.floor((distance % hour) / minute);
+        const seconds = Math.floor((distance % minute) / second);
 
-    inputContainer.hidden = true;
-    countdownEl.hidden = false;
+        // populate countdown
+        countdownElTitle.textContent = `${countdownTitle}`;
+        timeElements[0].textContent = `${days}`;
+        timeElements[1].textContent = `${hours}`;
+        timeElements[2].textContent = `${minutes}`;
+        timeElements[3].textContent = `${seconds}`;
+
+        inputContainer.hidden = true;
+        countdownEl.hidden = false;
+    }, second);
 }
 
 
@@ -47,10 +51,27 @@ function updateCountdown(e) {
     e.preventDefault(); // prevents from refreshing the page on submitting the form
     countdownTitle = e.srcElement[0].value;
     countdownDate = e.srcElement[1].value;
-    // get number verson of current Date, update DOM
-    countdownValue = new Date(countdownDate).getTime();  // milliseconds since Jan 1, 1970
-    updateDOM();
+    // check for valid date
+    if (countdownDate === '') {
+        alert('Please select a date for the countdown.');
+    } else {
+        // get number verson of current Date, update DOM
+        countdownValue = new Date(countdownDate).getTime();  // milliseconds since Jan 1, 1970
+        updateDOM();
+    }
+}
+
+// reset all values
+function reset() {
+    countdownEl.hidden = true;
+    inputContainer.hidden = false;
+    // stop countdown
+    clearInterval(countdownActive);
+    // reset values
+    countdownTitle = '';
+    countdownDate = '';
 }
 
 // event listeners
 countdownForm.addEventListener('submit', updateCountdown);
+countdownBtn.addEventListener('click', reset);
