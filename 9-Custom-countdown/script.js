@@ -13,6 +13,7 @@ let countdownTitle = '';
 let countdownDate = '';
 let countdownValue = Date; // a date obj
 let countdownActive;
+let savedCountdown;
 
 // all r in milliseconds
 const second = 1000;
@@ -49,7 +50,7 @@ function updateDOM() {
             timeElements[1].textContent = `${hours}`;
             timeElements[2].textContent = `${minutes}`;
             timeElements[3].textContent = `${seconds}`;
-            completeEl.hidden = false;
+            completeEl.hidden = true;
             countdownEl.hidden = false;
         }
     }, second);
@@ -61,6 +62,12 @@ function updateCountdown(e) {
     e.preventDefault(); // prevents from refreshing the page on submitting the form
     countdownTitle = e.srcElement[0].value;
     countdownDate = e.srcElement[1].value;
+    savedCountdown = {
+        title: countdownTitle,
+        date: countdownDate
+    };
+    // localStorage.setItem('countdown', savedCountdown);  u can only save strings in localStorage, so convert obj or any value to string using JSON.stringify()
+    localStorage.setItem('countdown', JSON.stringify(savedCountdown));
     // check for valid date
     if (countdownDate === '') {
         alert('Please select a date for the countdown.');
@@ -81,9 +88,25 @@ function reset() {
     // reset values
     countdownTitle = '';
     countdownDate = '';
+    localStorage.removeItem('countdown');
+}
+
+function restorePreviousCountdown() {
+    // get countdown from local storage
+    if (localStorage.getItem('countdown')) {
+        inputContainer.hidden = true;
+        savedCountdown = JSON.parse(localStorage.getItem('countdown'));  // converts a JSON string into obj or value
+        countdownTitle = savedCountdown.title;
+        countdownDate = savedCountdown.date;
+        countdownValue = new Date(countdownDate).getTime();
+        updateDOM();
+    }
 }
 
 // event listeners
 countdownForm.addEventListener('submit', updateCountdown);
 countdownBtn.addEventListener('click', reset);
 completeBtn.addEventListener('click', reset);
+
+// on load, check localStorage first
+restorePreviousCountdown();
