@@ -6,6 +6,8 @@ const websiteNameEl = document.getElementById('website-name');
 const websiteUrlEl = document.getElementById('website-url');
 const bookmarksContainer = document.getElementById('bookmarks-container');
 
+let bookmarks = [];
+
 function showModal() {
     modal.classList.add('show-modal');
     websiteNameEl.focus();
@@ -25,6 +27,24 @@ function validate(nameValue, urlValue) {
     return true;
 }
 
+// fetch bookmarks
+function fetchBookmarks() {
+    // get bookmarks from localstorage if available
+    if (localStorage.getItem('bookmarks')) {
+        bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+    } else {
+        // create bookmarks arr in localStorage
+        bookmarks = [
+            {
+                name: 'Google',
+                url: 'https://www.google.com'
+            }
+        ];
+        localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+    }
+
+}
+
 // handle form data
 function storeBookmark(e) {
     e.preventDefault();
@@ -36,6 +56,15 @@ function storeBookmark(e) {
     if (!validate(nameValue, urlValue)) {
         return false;  // break out of this func and dont do anything below it
     }
+    const bookmark = {
+        name: nameValue,
+        url: urlValue
+    };
+    bookmarks.push(bookmark);
+    localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+    fetchBookmarks();
+    bookmarkForm.reset();
+    websiteNameEl.focus();
 }
 
 // event listeners
@@ -44,3 +73,5 @@ modalClose.addEventListener('click', () => modal.classList.remove('show-modal'))
 window.addEventListener('click', (e) => (e.target === modal ? modal.classList.remove('show-modal') : false));  // false means dont do anything
 bookmarkForm.addEventListener('submit', storeBookmark);
 
+// on load, fetch bookmarks
+fetchBookmarks();
