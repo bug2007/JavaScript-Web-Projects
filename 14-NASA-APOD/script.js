@@ -12,8 +12,9 @@ const count = 10;
 let resultsArray = [];
 let favorites = {};
 
-function updateDOM() {
-    resultsArray.forEach((result) => {
+function createDOMNodes(page) {
+    const currentArray = page === 'results' ? resultsArray : Object.values(favorites);
+    currentArray.forEach((result) => {    // forEach doesn't work on objs
         // card container
         const card = document.createElement('div');
         card.classList.add('card');
@@ -59,7 +60,15 @@ function updateDOM() {
         link.appendChild(image);
         card.append(link, cardBody);
         imagesContainer.appendChild(card);
-    })
+    });
+}
+
+function updateDOM(page) {
+    // get favorites from localStorage
+    if (localStorage.getItem('nasaFavorites')) {
+        favorites = JSON.parse(localStorage.getItem('nasaFavorites'));
+    }
+    createDOMNodes(page);
 }
 
 // Get 10 images from NASA API
@@ -67,7 +76,7 @@ async function getNasaPictures() {
     try {
         const response = await fetch(apiUrl);
         resultsArray = await response.json();
-        updateDOM();
+        updateDOM('favorites');
     } catch (error) {
 
     }
