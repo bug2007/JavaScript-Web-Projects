@@ -40,9 +40,42 @@ let finalTimeDisplay = '0.0s';
 // Scroll
 let valueY = 0;
 
+// Reset game
+function playAgain() {
+  gamePage.addEventListener('click', startTimer);
+  scorePage.hidden = true;
+  splashPage.hidden = false;
+  equationsArray = [];
+  playerGuessArray = [];
+  valueY = 0;
+  playAgainBtn.hidden = true;
+}
+
+// Show score page
+function showScorePage() {
+  // Show 'Play Again' button after 1s
+  setTimeout(() => {
+    playAgainBtn.hidden = false;
+  }, 1000);
+  gamePage.hidden = true;
+  scorePage.hidden = false;
+}
+
+// Format & display time in DOM
+function scoresToDOM() {
+  finalTimeDisplay = finalTime.toFixed(1);
+  baseTime = timePlayed.toFixed(1);
+  penaltyTime = penaltyTime.toFixed(1);
+  baseTimeEl.textContent = `Base Time: ${baseTime}s`;
+  penaltyTimeEl.textContent = `Penalty: +${penaltyTime}s`;
+  finalTimeEl.textContent = `${finalTimeDisplay}s`;
+  // Since game is over by now, scroll to top, go to score page
+  itemContainer.scrollTo({top: 0, behavior: 'instant'});
+  showScorePage();
+}
+
 // Stop timer, process results, go to scorePage
 function checkTime() {
-  console.log(timePlayed);
   if (playerGuessArray.length == questionAmount) {
     clearInterval(timer);
     // Check for wrong guesses, add penalty time
@@ -55,7 +88,7 @@ function checkTime() {
       }
     });
     finalTime = timePlayed + penaltyTime;
-    console.log('time', timePlayed, 'penalty', penaltyTime, 'final', finalTime);
+    scoresToDOM();
   }
 }
 
@@ -102,7 +135,6 @@ function createEquations() {
   const correctEquations = getRandomInt(questionAmount);
   // Set amount of wrong equations
   const wrongEquations = questionAmount - correctEquations;
-  console.log(correctEquations, wrongEquations);
   // Loop through, multiply random numbers up to 9, push to array
   for (let i = 0; i < correctEquations; i++) {
     firstNumber = getRandomInt(9);
