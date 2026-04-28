@@ -16,7 +16,7 @@
         </div>
 
         <!-- Splash page -->
-        <div class="card" id="splash-page" hidden>
+        <div class="card" id="splash-page">
             <form id="start-form">
                 <div class="selection-container">
                     <!-- 10 questions radio input -->
@@ -47,7 +47,7 @@
                         </span>
                     </div>
                     <!-- 99 questions radio input -->
-                    <div class="radio-container selected-label">
+                    <div class="radio-container">
                         <label for="value-99">99 Questions</label>
                         <input type="radio" name="questions" value="99" id="value-99">
                         <span class="best-score">
@@ -64,10 +64,40 @@
         </div>
 
         <!-- Countdown Page -->
-        <div class="card" id="countdown-page">
+        <div class="card" id="countdown-page" hidden>
             <h1 class="countdown">3</h1>
         </div>
 
+        <!-- Game Page -->
+        <div class="card" id="game-page" hidden>
+            <!-- Item container -->
+            <div class="item-container">
+                <div class="selected-item"></div>
+                <div class="item">
+                    <h1>3 x 3 = 30</h1>
+                </div>
+            </div>
+            <!-- RIght/Wrong button -->
+            <div class="item-footer">
+                <button class="wrong">Wrong</button>
+                <button class="right">Right</button>
+            </div>
+        </div>
+
+        <!-- Score page -->
+        <div class="card" id="score-page" hidden>
+            <!-- Score container -->
+            <div class="score-container">
+                <h1 class="title">Your Time</h1>
+                <h1 class="final-time">3.4s</h1>
+                <h1 class="base-time">Base Time: 2.4s</h1>
+                <h1 class="penalty-time">Penalty: +1.0s</h1>
+            </div>
+            <!-- Play again button -->
+            <div class="score-footer">
+                <button class="play-again">Play Again</button>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
