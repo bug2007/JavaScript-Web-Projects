@@ -23,6 +23,7 @@ let listArrays = [];  // going to be an arr of all the arrays above it
 // Drag Functionality
 let draggedItem;
 let currentColumn;
+let dragging = false;
 
 
 // Get Arrays from localStorage if available, set default values if not
@@ -37,7 +38,7 @@ function getSavedColumns() {
     progressListArray = ['Work on projects', 'Listen to music'];
     completeListArray = ['Being cool', 'Getting stuff done'];
     onHoldListArray = ['Being uncool'];
-  }
+  }  
 }
 
 // Set localStorage Arrays
@@ -47,6 +48,12 @@ function updateSavedColumns() {
   arrayNames.forEach((arrayName, index) => {
     localStorage.setItem(`${arrayName}Items`,JSON.stringify(listArrays[index]));
   });
+}
+
+// Filter arrays to remove empty/null items
+function filterArray(array) {
+  const filteredArray = array.filter(item => item !== null);
+  return filteredArray;
 }
 
 // Create DOM Elements for each list item
@@ -61,6 +68,9 @@ function createItemEl(columnEl, column, item, index) {
   listEl.textContent = item;
   listEl.draggable = true; // to make the item draggable
   listEl.setAttribute('ondragstart', 'drag(event)');  // specifies what should happen when the element is dragged
+  listEl.contentEditable = true; // to be able to edit the item names
+  listEl.id = index;
+  listEl.setAttribute('onfocusout', `updateItem(${index}, ${column})`);
   // Append
   columnEl.appendChild(listEl);
 }
@@ -77,28 +87,48 @@ function updateDOM() {
   backlogListArray.forEach((backlogItem, index) => {
     createItemEl(backlogList, 0, backlogItem, index);
   });
+  backlogListArray = filterArray(backlogListArray);
 
   // Progress Column
   progressList.textContent = '';
   progressListArray.forEach((progressItem, index) => {
     createItemEl(progressList, 1, progressItem, index);
   });
+  progressListArray = filterArray(progressListArray);
 
   // Complete Column
   completeList.textContent = '';
   completeListArray.forEach((completeItem, index) => {
     createItemEl(completeList, 2, completeItem, index);
   });
+  completeListArray = filterArray(completeListArray);
 
   // On Hold Column
   onHoldList.textContent = '';
   onHoldListArray.forEach((onHoldItem, index) => {
     createItemEl(onHoldList, 3, onHoldItem, index);
   });
+  onHoldListArray = filterArray(onHoldListArray);
 
   // Run getSavedColumns only once, Update Local Storage
   updatedOnLoad = true;
   updateSavedColumns();
+}
+
+// Update Item - delete if necessary, or update array value
+function updateItem(id, column) {
+  const selectedArray = listArrays[column];
+  console.log(listArrays, selectedArray);
+  const selectedColumnEl = listColumns[column].children;
+  // we are only allowed to edit items when we are not dragging them
+  if (!dragging) {
+    if (!selectedColumnEl[id].textContent) {
+      delete selectedArray[id];    // but the deleted items are still going to take up space as null so use .filter
+    } else {
+      selectedArray[id] = selectedColumnEl[id].textContent;
+    }  
+    updateDOM();
+  }
 }
 
 // Show Add Item Input box
@@ -111,10 +141,12 @@ function showInputBox(column) {
 // Add to column list, reset textbox
 function addToColumn(column) {
   const itemText = addItems[column].textContent;
-  const selectedArray = listArrays[column];
-  selectedArray.push(itemText);
-  addItems[column].textContent = '';
-  updateDOM();
+  if (itemText) {
+    const selectedArray = listArrays[column];
+    selectedArray.push(itemText);
+    addItems[column].textContent = '';
+    updateDOM();
+  }
 }
 
 // Hide Item Input box
@@ -151,7 +183,8 @@ function rebuildArrays() {
 // When item starts dragging
 function drag(e) {    // triggered by ondragstart
   draggedItem = e.target;
-  console.log('draggedItem:', draggedItem);
+  // console.log('draggedItem:', draggedItem);
+  dragging = true;
 }
 
 // Column allows for item to drop
@@ -177,6 +210,8 @@ function drop(e) {   // triggered by ondrop
   // Add item to column
   const parent = listColumns[currentColumn];
   parent.appendChild(draggedItem);
+  // Dragging complete
+  dragging = false;
   rebuildArrays();
 }
 
