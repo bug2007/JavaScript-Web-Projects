@@ -165,6 +165,9 @@ function rebuildArrays() {
   for (let i = 0; i < backlogList.children.length; i++) {
     backlogListArray.push(backlogList.children[i].textContent);
   }
+  // OR convert it into an array first since children is not an array and then, use a map function
+  // backlogList = Array.from(backlogList.children).map(i => i.textContent));
+
   progressListArray = [];
   for (let i = 0; i < progressList.children.length; i++) {
     progressListArray.push(progressList.children[i].textContent);
