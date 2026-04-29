@@ -68,7 +68,7 @@ function createItemEl(columnEl, column, item, index) {
 // Update Columns in DOM - Reset HTML, Filter Array, Update localStorage
 function updateDOM() {
   // Check localStorage once
-  if (!updatedOnLoad) {   // if local storage hasn't been updated
+  if (!updatedOnLoad) {   // run getSavedColumns() only once when we load the page
     getSavedColumns();
   }
 
@@ -97,10 +97,33 @@ function updateDOM() {
   });
 
   // Run getSavedColumns only once, Update Local Storage
-
-
+  updatedOnLoad = true;
+  updateSavedColumns();
 }
-;
+
+// Rebuild arrays
+function rebuildArrays() {
+  // console.log(backlogList.children);
+  // console.log(progressList.children);
+  backlogListArray = [];
+  for (let i = 0; i < backlogList.children.length; i++) {
+    backlogListArray.push(backlogList.children[i].textContent);
+  }
+  progressListArray = [];
+  for (let i = 0; i < progressList.children.length; i++) {
+    progressListArray.push(progressList.children[i].textContent);
+  }
+  completeListArray = [];
+  for (let i = 0; i < completeList.children.length; i++) {
+    completeListArray.push(completeList.children[i].textContent);
+  }
+  onHoldListArray= [];
+  for (let i = 0; i < onHoldList.children.length; i++) {
+    onHoldListArray.push(onHoldList.children[i].textContent);
+  }
+  updateDOM();
+}
+
 // When item starts dragging
 function drag(e) {    // triggered by ondragstart
   draggedItem = e.target;
@@ -130,6 +153,7 @@ function drop(e) {   // triggered by ondrop
   // Add item to column
   const parent = listColumns[currentColumn];
   parent.appendChild(draggedItem);
+  rebuildArrays();
 }
 
 updateDOM();
