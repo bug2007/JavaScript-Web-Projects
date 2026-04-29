@@ -3,7 +3,7 @@ const saveItemBtns = document.querySelectorAll('.solid');
 const addItemContainers = document.querySelectorAll('.add-container');
 const addItems = document.querySelectorAll('.add-item');
 // Item Lists
-const itemLists = document.querySelectorAll('.drag-item-list');
+const listColumns = document.querySelectorAll('.drag-item-list');
 const backlogList = document.getElementById('backlog-list');
 const progressList = document.getElementById('progress-list');
 const completeList = document.getElementById('complete-list');
@@ -21,6 +21,8 @@ let onHoldListArray = [];
 let listArrays = [];  // going to be an arr of all the arrays above it
 
 // Drag Functionality
+let draggedItem;
+let currentColumn;
 
 
 // Get Arrays from localStorage if available, set default values if not
@@ -57,6 +59,8 @@ function createItemEl(columnEl, column, item, index) {
   const listEl = document.createElement('li');
   listEl.classList.add('drag-item');
   listEl.textContent = item;
+  listEl.draggable = true; // to make the item draggable
+  listEl.setAttribute('ondragstart', 'drag(event)');  // specifies what should happen when the element is dragged
   // Append
   columnEl.appendChild(listEl);
 }
@@ -96,6 +100,41 @@ function updateDOM() {
 
 
 }
+;
+// When item starts dragging
+function drag(e) {    // triggered by ondragstart
+  draggedItem = e.target;
+  console.log('draggedItem:', draggedItem);
+}
 
+// Column allows for item to drop
+function allowDrop(e) {  // triggered by ondragover
+  // by default, data/elements can't be dropped in other elements. To allow a drop, we must prevent the default handling of the element by using event.preventDefault()
+  e.preventDefault(); 
+}
+
+// When item enters column area
+function dragEnter(column) {   // triggered by ondragenter
+  // console.log(listColumns[column]);
+  listColumns[column].classList.add('over');
+  currentColumn = column;
+}
+
+// Dropping item in column
+function drop(e) {   // triggered by ondrop
+  e.preventDefault();
+  // Remove background color & padding
+  listColumns.forEach((column) => {
+    column.classList.remove('over');
+  });
+  // Add item to column
+  const parent = listColumns[currentColumn];
+  parent.appendChild(draggedItem);
+}
 
 updateDOM();
+
+// ondragstart = specifies what should happen when the element is dragged
+// ondragover (see in html) = specifies where the dragged data can be dropped
+// ondrop (see in html) = when the dragged data is dropped, a drop event occurs
+// ondragenter (see in html) = this attribute fires when a draggable element or text selection enters a valid drop target
