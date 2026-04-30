@@ -22,8 +22,8 @@ let currentSize = 10;
 let bucketColor = '#FFFFFF';
 let currentColor = '#A51DAB';
 let isEraser = false;
-// let isMouseDown = false;
-// let drawnArray = [];
+let isMouseDown = false;
+let drawnArray = [];
 
 // Formatting Brush Size
 function displayBrushSize() {
@@ -126,7 +126,7 @@ function createCanvas() {
 // Get Mouse Position
 function getMousePosition(event) {
   const boundaries = canvas.getBoundingClientRect();
-  return {
+  return {   // returns x and y relative to the canvas, rather than relative to the screen. tells us where is the mouse INSIDE THE CANVAS? screen position -> canvas position
     x: event.clientX - boundaries.left,
     y: event.clientY - boundaries.top,
   };
@@ -136,12 +136,12 @@ function getMousePosition(event) {
 canvas.addEventListener('mousedown', (event) => {
   isMouseDown = true;
   const currentPosition = getMousePosition(event);
-  console.log('mouse is clicked', currentPosition);
-//   context.moveTo(currentPosition.x, currentPosition.y);
-//   context.beginPath();
-//   context.lineWidth = currentSize;
-//   context.lineCap = 'round';
-//   context.strokeStyle = currentColor;
+  // console.log('mouse is clicked', currentPosition);
+  context.moveTo(currentPosition.x, currentPosition.y);  // so that we can draw from points without connecting them in a line
+  context.beginPath();
+  context.lineWidth = currentSize; 
+  context.lineCap = 'round';  // the endings of a line will be shaped round
+  context.strokeStyle = currentColor;
 });
 
 // Mouse Move
@@ -149,8 +149,8 @@ canvas.addEventListener('mousemove', (event) => {
   if (isMouseDown) {
     const currentPosition = getMousePosition(event);
     console.log('mouse is moving', currentPosition);
-  //   context.lineTo(currentPosition.x, currentPosition.y);
-  //   context.stroke();
+    context.lineTo(currentPosition.x, currentPosition.y); // to be able to draw continuous line
+    context.stroke();
   //   storeDrawn(
   //     currentPosition.x,
   //     currentPosition.y,
@@ -166,7 +166,7 @@ canvas.addEventListener('mousemove', (event) => {
 // Mouse Up
 canvas.addEventListener('mouseup', () => {
   isMouseDown = false;
-  console.log('mouse is unclicked');
+  // console.log('mouse is unclicked');
 });
 
 // // Save to Local Storage
