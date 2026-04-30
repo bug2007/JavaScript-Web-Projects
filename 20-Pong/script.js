@@ -44,8 +44,8 @@ if (isMobile.matches) {
 let playerScore = 0;
 let computerScore = 0;
 const winningScore = 7;
-// let isGameOver = true;
-// let isNewGame = true;
+let isGameOver = true;  // initially, the game has not finished and declared a winner yet
+let isNewGame = true;
 
 // Render Everything on Canvas
 function renderCanvas() {
@@ -173,30 +173,30 @@ function computerAI() {
 
 function showGameOverEl(winner) {
   // Hide Canvas
-
-  // // Container
-  // gameOverEl.textContent = '';
-  // gameOverEl.classList.add('game-over-container');
-  // // Title
-  // const title = document.createElement('h1');
-  // title.textContent = `${winner} Wins!`;
-  // // Button
-  // const playAgainBtn = document.createElement('button');
-  // playAgainBtn.setAttribute('onclick', 'startGame()');
-  // playAgainBtn.textContent = 'Play Again';
-  // // Append
-
-  
+  canvas.hidden = true;
+  // Container
+  gameOverEl.textContent = '';
+  gameOverEl.classList.add('game-over-container');
+  // Title
+  const title = document.createElement('h1');
+  title.textContent = `${winner} Wins!`;
+  // Button
+  const playAgainBtn = document.createElement('button');
+  playAgainBtn.setAttribute('onclick', 'startGame()');
+  playAgainBtn.textContent = 'Play Again';
+  // Append
+  gameOverEl.append(title, playAgainBtn);
+  body.appendChild(gameOverEl);
 }
 
 // Check If One Player Has Winning Score, If They Do, End Game
 function gameOver() {
-  // if (playerScore === winningScore || computerScore === winningScore) {
-  //   isGameOver = ;
-  //   // Set Winner
-  //   let winner = ;
-  //   showGameOverEl(winner);
-  // }
+  if (playerScore === winningScore || computerScore === winningScore) {
+    isGameOver = true;
+    // Set Winner
+    const winner = playerScore === winningScore ? 'Player 1' : 'Computer';
+    showGameOverEl(winner);
+  }
 }
 
 // Called Every Frame
@@ -206,17 +206,20 @@ function animate() {
   ballMove();   // controls speed. overtimes, speed increases until a max value. changes the x & y values to increase or decrease them, depending on the direction that the ball is currently moving 
   ballBoundaries();  // for the ball to bounce off and change directions. also, if the ball crosses the bottom (y-700) or touched the top (y-0), it means the ball has passed someone's paddle and it increments the score. this is done by this func.
   computerAI(); // computer moves its paddle. but its paddle moves more slowly than the ball (to allow user to beat the computer)
-  window.requestAnimationFrame(animate); // going to keep calling itself over and over again in a loop
+  gameOver();  // we want to check if anyone reached the winningScore at every frame
+  if (!isGameOver) {   // if game not over yet, only then we want to continue animating
+    window.requestAnimationFrame(animate); // going to keep calling itself over and over again in a loop
+  }
 }
 
 // Start Game, Reset Everything
 function startGame() {
-  // if (isGameOver && !isNewGame) {
-
-
-  // }
-  // isGameOver = ;
-  // isNewGame = ;
+  if (isGameOver && !isNewGame) {
+    body.removeChild(gameOverEl);
+    canvas.hidden = false;
+  }
+  isGameOver = false;
+  isNewGame = false;
   playerScore = 0;
   computerScore = 0;
   ballReset();  // puts the ball in the center and resets its speed
