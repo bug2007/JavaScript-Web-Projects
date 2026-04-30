@@ -90,9 +90,6 @@ function createCanvas() {
   renderCanvas();
 }
 
-// Remove this
-createCanvas();
-
 // Reset Ball to Center
 function ballReset() {
   ballX = width / 2;
@@ -204,11 +201,12 @@ function gameOver() {
 
 // Called Every Frame
 function animate() {
+  // all these below are going to be called in every frame
   renderCanvas();
-  ballMove();
-  ballBoundaries();
-  computerAI();
-  
+  ballMove();   // controls speed. overtimes, speed increases until a max value. changes the x & y values to increase or decrease them, depending on the direction that the ball is currently moving 
+  ballBoundaries();  // for the ball to bounce off and change directions. also, if the ball crosses the bottom (y-700) or touched the top (y-0), it means the ball has passed someone's paddle and it increments the score. this is done by this func.
+  computerAI(); // computer moves its paddle. but its paddle moves more slowly than the ball (to allow user to beat the computer)
+  window.requestAnimationFrame(animate); // going to keep calling itself over and over again in a loop
 }
 
 // Start Game, Reset Everything
@@ -221,12 +219,13 @@ function startGame() {
   // isNewGame = ;
   playerScore = 0;
   computerScore = 0;
-  ballReset();
+  ballReset();  // puts the ball in the center and resets its speed
   createCanvas();
   animate();
+  // setInterval(animate, 1000/60); // animate() runs 60 times per second (60 frames/s). but use requestAnimationFrame() to make animation smoother
   canvas.addEventListener('mousemove', (e) => {
-    console.log(e.clientX);
-    playerMoved = true;
+    // console.log(e.clientX);
+    playerMoved = true;  // going to use to only have the computer react if the player made the first move
     // Compensate for canvas being centered
     paddleBottomX = e.clientX - canvasPosition - paddleDiff;
     if (paddleBottomX < paddleDiff) {
@@ -241,4 +240,4 @@ function startGame() {
 }
 
 // On Load
-// startGame();
+startGame();
